@@ -12,9 +12,10 @@ class AlgoritmoService
      * Maneja piezas faltantes formando "islas" independientes.
      *
      * @param  int  $rompecabezasId
+     * @param  int|null  $piezaInicialId
      * @return array{pasos: array, islas: int, total_disponibles: int, total_general: int, porcentaje: float, piezas_sin_conexion: array}
      */
-    public function armar(int $rompecabezasId): array
+    public function armar(int $rompecabezasId, ?int $piezaInicialId = null): array
     {
         // 1. Cargar TODAS las piezas del rompecabezas (para estadísticas)
         $todasLasPiezas = Pieza::where('rompecabezas_id', $rompecabezasId)->get();
@@ -69,8 +70,16 @@ class AlgoritmoService
         $stepNum   = 0;
         $remaining = $ids;
 
-        // Shuffle para aleatoriedad real
-        shuffle($remaining);
+        if ($piezaInicialId !== null && $piezas->has($piezaInicialId)) {
+            $remaining = array_values(array_filter(
+                $remaining,
+                fn ($id) => $id !== $piezaInicialId
+            ));
+            array_unshift($remaining, $piezaInicialId);
+        } else {
+            // Shuffle para aleatoriedad real cuando el usuario no elige pieza inicial.
+            shuffle($remaining);
+        }
 
         while (! empty($remaining)) {
             // Elegir pieza inicial de esta isla

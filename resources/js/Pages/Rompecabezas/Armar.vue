@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <!-- Header -->
-        <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
             <div class="d-flex align-items-center">
                 <Link :href="route('rompecabezas.show', rompecabezas.id)" class="btn btn-outline-secondary btn-sm me-3">
                     <i class="fas fa-arrow-left me-1"></i>
@@ -17,10 +17,25 @@
                     </p>
                 </div>
             </div>
-            <div class="d-flex gap-2">
-                <a :href="route('rompecabezas.armar', rompecabezas.id)" class="btn btn-primary">
+            <div class="d-flex flex-column flex-md-row align-items-md-end gap-2">
+                <div style="min-width: 220px;">
+                    <label class="form-label small fw-semibold mb-1">
+                        Pieza inicial
+                    </label>
+                    <select v-model="selectedPiezaInicialId" class="form-select">
+                        <option value="">Al azar</option>
+                        <option
+                            v-for="pieza in piezasDisponibles"
+                            :key="pieza.id"
+                            :value="pieza.id"
+                        >
+                            {{ pieza.etiqueta }}
+                        </option>
+                    </select>
+                </div>
+                <a :href="algoritmoHref" class="btn btn-primary">
                     <i class="fas fa-shuffle me-1"></i>
-                    Nueva pieza inicial
+                    Recalcular guía
                 </a>
             </div>
         </div>
@@ -245,6 +260,20 @@ const route = inject('route');
 const props = defineProps({
     rompecabezas: Object,
     resultado: Object,
+    piezasDisponibles: Array,
+    piezaInicialId: {
+        type: [Number, String],
+        default: '',
+    },
+});
+
+const selectedPiezaInicialId = ref(props.piezaInicialId ?? '');
+const algoritmoHref = computed(() => {
+    const base = route('rompecabezas.armar', props.rompecabezas.id);
+
+    return selectedPiezaInicialId.value
+        ? `${base}?pieza_inicial_id=${encodeURIComponent(selectedPiezaInicialId.value)}`
+        : base;
 });
 
 // ─── Reglas de oro (datos estáticos) ─────────────────────────────────────────

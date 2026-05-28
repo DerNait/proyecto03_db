@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <!-- Header -->
-        <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
             <div class="d-flex align-items-center">
                 <Link :href="route('rompecabezas.index')" class="btn btn-outline-secondary btn-sm me-3">
                     <i class="fas fa-arrow-left me-1"></i>
