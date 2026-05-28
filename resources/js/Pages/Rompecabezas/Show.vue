@@ -373,7 +373,7 @@
         </div>
 
         <!-- ═══ GRAFO VISUAL DE CONEXIONES ═══ -->
-        <div class="card shadow-sm mt-4">
+        <div class="card shadow-sm mt-4 graph-card" :class="{ 'graph-fullscreen': graphFullscreen }">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <span class="fw-semibold">
                     <i class="fas fa-diagram-project me-2 text-primary"></i>
@@ -383,6 +383,14 @@
                     </span>
                 </span>
                 <div class="d-flex gap-2" v-if="localPiezas.length > 0">
+                    <button
+                        @click="toggleGraphFullscreen"
+                        class="btn btn-outline-secondary btn-sm"
+                        :title="graphFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'"
+                    >
+                        <i :class="graphFullscreen ? 'fas fa-compress' : 'fas fa-up-right-and-down-left-from-center'" class="me-1"></i>
+                        {{ graphFullscreen ? 'Salir' : 'Pantalla completa' }}
+                    </button>
                     <button @click="resetZoom" class="btn btn-outline-secondary btn-sm" title="Reset zoom">
                         <i class="fas fa-expand me-1"></i>Reset
                     </button>
@@ -406,7 +414,7 @@
                         class="w-100"
                         :style="{
                             display: 'block',
-                            maxHeight: '520px',
+                            maxHeight: graphFullscreen ? 'calc(100vh - 145px)' : '520px',
                             cursor: mode === 'draw' ? 'crosshair'
                                   : dragging       ? 'grabbing'
                                   : panning        ? 'grabbing'
@@ -670,13 +678,17 @@ const props = defineProps({
 // ─── Estado local reactivo ───────────────────────────────────────────────────
 const localPiezas     = ref([...props.piezas]);
 const localConexiones = ref([...props.conexiones]);
+const graphFullscreen = ref(false);
 
 // Re-correr simulación cuando cambia estructura del grafo (nodos o aristas)
 watch(
     () => [localPiezas.value.length, localConexiones.value.length],
     () => runSimulation(),
 );
-function onKeydown(e) { if (e.key === 'Escape') cancelInlineInput(); }
+function onKeydown(e) {
+    if (e.key !== 'Escape') return;
+    cancelInlineInput();
+}
 onMounted(() => { runSimulation(); document.addEventListener('keydown', onKeydown); });
 onUnmounted(() => { if (_sim) _sim.stop(); document.removeEventListener('keydown', onKeydown); });
 
@@ -882,6 +894,11 @@ function onSVGWheel(event) {
 
 // ── Reset zoom ────────────────────────────────────────────────────────────────
 function resetZoom() { vt.value = { x: 0, y: 0, s: 1 }; }
+
+function toggleGraphFullscreen() {
+    graphFullscreen.value = !graphFullscreen.value;
+    nextTick(() => runSimulation());
+}
 
 // Aristas calculadas a partir de simPos (reactivo)
 const graphEdges = computed(() => {
@@ -1134,3 +1151,25 @@ const dificultadBadge = (d) => ({
     'bg-danger': d === 'dificil',
 });
 </script>
+
+<style scoped>
+.graph-fullscreen {
+    position: fixed;
+    inset: 12px;
+    z-index: 1080;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.5rem;
+}
+
+.graph-fullscreen .card-body {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.graph-fullscreen svg {
+    height: calc(100vh - 145px);
+}
+</style>
