@@ -29,4 +29,8 @@ WORKDIR /var/www/html
 # Alinear UID/GID con usuario WSL (1000)
 RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 
-USER www-data
+COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php-fpm"]
