@@ -1,0 +1,117 @@
+// ─── Variables de Bootstrap — deben ir ANTES del @import ───────────────────
+$primary:        #e74c3c;
+$secondary:      #2c3e50;
+$success:        #27ae60;
+$warning:        #f39c12;
+$danger:         #c0392b;
+$info:           #2980b9;
+$light:          #f8f9fa;
+$dark:           #1a1a2e;
+
+$body-bg:        #f4f6f9;
+$body-color:     #2c3e50;
+
+$font-family-sans-serif: 'Segoe UI', system-ui, -apple-system, sans-serif;
+$border-radius:  0.5rem;
+$border-radius-lg: 0.75rem;
+
+// Botones con más padding
+$btn-padding-y:  0.45rem;
+$btn-padding-x:  1rem;
+
+// ─── Bootstrap completo ─────────────────────────────────────────────────────
+@import 'bootstrap/scss/bootstrap';
+
+// ─── FontAwesome ────────────────────────────────────────────────────────────
+// Apunta a /public/webfonts/ (archivos copiados en tiempo de build)
+$fa-font-path: '/webfonts';
+@import '@fortawesome/fontawesome-free/scss/fontawesome';
+@import '@fortawesome/fontawesome-free/scss/solid';
+@import '@fortawesome/fontawesome-free/scss/regular';
+@import '@fortawesome/fontawesome-free/scss/brands';
+
+// ─── Estilos personalizados ──────────────────────────────────────────────────
+
+// Navbar
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    .fa-puzzle-piece {
+        color: $warning;
+    }
+}
+
+// Piezas disponibles / faltantes
+.pieza-disponible { color: $success; }
+.pieza-faltante   {
+    color: $danger;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+// Tarjetas de pasos del algoritmo
+.paso-card {
+    transition: box-shadow 0.2s ease;
+    border-left: 4px solid transparent;
+
+    &.paso-inicio    { border-left-color: $primary; }
+    &.paso-conexion  { border-left-color: $success; }
+    &.paso-isla      { border-left-color: $warning; }
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+}
+
+// Instrucciones del algoritmo — preservar saltos de línea
+.instrucciones-texto {
+    white-space: pre-line;
+    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+// Badge de isla
+.badge-isla {
+    font-size: 0.7rem;
+    padding: 0.25em 0.6em;
+    vertical-align: middle;
+}
+
+// Quick-add input group highlight
+.quick-add-form .form-control:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+}
+
+// Stat cards en el resumen
+.stat-card {
+    border-radius: $border-radius-lg;
+    transition: transform 0.15s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+}
+
+// Tabla de piezas
+.table-piezas th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $secondary;
+}
+
+// Print styles
+@media print {
+    .no-print { display: none !important; }
+    .navbar   { display: none !important; }
+
+    .paso-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+        margin-bottom: 1rem;
+    }
+}
